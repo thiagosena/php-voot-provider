@@ -63,13 +63,7 @@ EOQ;
 
         $stmt = $this->storage->prepare($query);
         $stmt->bindValue(':user_id', $resourceOwnerId, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if (false === $result) {
-            throw new VootStorageException(
-                'internal_server_error',
-                'unable to retrieve membership'
-            );
-        }
+        $stmt->execute();
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
         $totalResults = $data['count'];
 
@@ -89,17 +83,13 @@ FROM
     roles r
 WHERE
     ugr.user_id = :user_id AND ugr.group_id = g.id AND ugr.role_id = r.id
-LIMIT :start_index, :count;
 EOQ;
 
         $stmt = $this->storage->prepare($query);
         $stmt->bindValue(':user_id', $resourceOwnerId, PDO::PARAM_STR);
-        $stmt->bindValue(':start_index', $startIndex, PDO::PARAM_INT);
-        $stmt->bindValue(':count', $count, PDO::PARAM_INT);
-        $result = $stmt->execute();
-        if (false === $result) {
-            throw new VootStorageException('internal_server_error', 'unable to retrieve membership');
-        }
+        //$stmt->bindValue(':start_index', $startIndex, PDO::PARAM_INT);
+        //$stmt->bindValue(':count', $count, PDO::PARAM_INT);
+        $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return [
@@ -128,10 +118,7 @@ EOQ;
 
         $stmt = $this->storage->prepare($query);
         $stmt->bindValue(':group_id', $groupId, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if (false === $result) {
-            throw new VootStorageException('internal_server_error', 'unable to retrieve members');
-        }
+        $stmt->execute();
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
         $totalResults = $data['count'];
 
@@ -156,17 +143,11 @@ FROM
 WHERE
     u.id = ugr.user_id AND g.id = ugr.group_id AND r.id = ugr.role_id AND g.id = :group_id
 ORDER BY r.id
-LIMIT :start_index, :count
 EOQ;
 
         $stmt = $this->storage->prepare($query);
         $stmt->bindValue(':group_id', $groupId, PDO::PARAM_STR);
-        $stmt->bindValue(':start_index', $startIndex, PDO::PARAM_INT);
-        $stmt->bindValue(':count', $count, PDO::PARAM_INT);
-        $result = $stmt->execute();
-        if (false === $result) {
-            throw new VootStorageException('internal_server_error', 'unable to retrieve members');
-        }
+        $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // fill emails element according to OpenSocial "Plural-Field"
